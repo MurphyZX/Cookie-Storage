@@ -1,0 +1,46 @@
+# 操作系统生成的文件
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE和编辑器的文件
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Node.js依赖（如果你使用npm进行开发）
+node_modules/
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+package-lock.json
+yarn.lock
+
+# 构建输出
+dist/
+build/
+*.zip
+
+# 临时文件
+*.tmp
+*.bak
+*.log
+.temp/
+.cache/
+
+# 本地环境变量
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Chrome扩展特定
+*.crx
+*.pem 

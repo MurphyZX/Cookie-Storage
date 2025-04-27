@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Cookie和Storage提取器",
+  "version": "1.0",
+  "description": "一键提取当前网站的cookie和local storage",
+  "permissions": ["cookies", "activeTab", "scripting", "clipboardWrite"],
+  "host_permissions": ["<all_urls>"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "images/icon.png"
+  },
+  "icons": {
+    "128": "images/icon.png"
+  }
+} 
