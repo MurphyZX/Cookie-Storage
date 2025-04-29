@@ -15,7 +15,7 @@
 ## 安装方法
 
 ### 从Chrome网上应用店安装
-1. 访问[Chrome网上应用店](https://chromewebstore.google.com/detail/glomgihfckpdpjgidnfkcmaemljkimgk?utm_source=item-share-cb)
+1. 访问 [Chrome网上应用店](https://chromewebstore.google.com/detail/glomgihfckpdpjgidnfkcmaemljkimgk?utm_source=item-share-cb)
 2. 搜索"Cookie和Storage提取器"
 3. 点击"添加到Chrome"按钮
 
