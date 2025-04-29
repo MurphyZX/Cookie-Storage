@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Cookie和Storage提取器",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "一键提取当前网站的cookie和local storage，支持单条数据复制",
   "permissions": ["cookies", "activeTab", "scripting", "clipboardWrite"],
   "host_permissions": ["<all_urls>"],
