@@ -13,12 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       
     - name: 设置Node.js环境
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: 16
+        node-version: 20
         
     - name: 安装依赖
       run: |
@@ -37,7 +37,7 @@ jobs:
         cd ..
       
     - name: 上传构建产物
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: chrome-extension
         path: cookie_storage_extractor.zip
@@ -58,6 +58,6 @@ jobs:
     # 自动创建GitHub Release
     - name: 创建Release
       if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v1
+      uses: softprops/action-gh-release@v2
       with:
         files: cookie_storage_extractor.zip 
