@@ -1,4 +1,4 @@
-# Cookie和Storage提取器
+# Cookie 和 Storage 提取器 / Cookie and Storage Extractor
 
 一个简单实用的Chrome扩展，用于提取当前网站的Cookie、Local Storage和Session Storage数据。
 
