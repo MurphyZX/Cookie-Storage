@@ -6,7 +6,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      width: 400px;
+      width: 500px;
       padding: 10px;
     }
     button {
@@ -55,6 +55,54 @@
       border: 1px solid #ccc;
       border-top: none;
     }
+    .data-display-toggle {
+      margin: 10px 0;
+    }
+    .data-item {
+      display: flex;
+      padding: 8px;
+      border-bottom: 1px solid #eee;
+      align-items: center;
+    }
+    .data-item:hover {
+      background-color: #f5f5f5;
+    }
+    .data-content {
+      flex-grow: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 10px;
+      word-break: break-all;
+    }
+    .data-key {
+      font-weight: bold;
+      color: #333;
+    }
+    .data-value {
+      color: #666;
+      margin-left: 5px;
+    }
+    .copy-btn {
+      background-color: #f1f1f1;
+      color: #333;
+      border: 1px solid #ccc;
+      padding: 3px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .copy-btn:hover {
+      background-color: #e0e0e0;
+    }
+    .data-container {
+      max-height: 350px;
+      overflow-y: auto;
+      border: 1px solid #eee;
+      margin-top: 10px;
+    }
+    .view-toggle {
+      margin: 10px 0;
+    }
   </style>
 </head>
 <body>
@@ -68,19 +116,40 @@
 
   <div id="Cookie" class="tabcontent" style="display: block;">
     <button id="getCookies">获取Cookies</button>
-    <button id="copyCookies">复制到剪贴板</button>
+    <button id="copyCookies">复制全部到剪贴板</button>
+    <div class="view-toggle">
+      <input type="radio" id="cookieListView" name="cookieView" value="list" checked>
+      <label for="cookieListView">列表视图</label>
+      <input type="radio" id="cookieRawView" name="cookieView" value="raw">
+      <label for="cookieRawView">原始视图</label>
+    </div>
+    <div id="cookieListContainer" class="data-container"></div>
     <textarea id="cookieOutput" placeholder="点击'获取Cookies'按钮..."></textarea>
   </div>
 
   <div id="LocalStorage" class="tabcontent">
     <button id="getLocalStorage">获取Local Storage</button>
-    <button id="copyLocalStorage">复制到剪贴板</button>
+    <button id="copyLocalStorage">复制全部到剪贴板</button>
+    <div class="view-toggle">
+      <input type="radio" id="localListView" name="localView" value="list" checked>
+      <label for="localListView">列表视图</label>
+      <input type="radio" id="localRawView" name="localView" value="raw">
+      <label for="localRawView">原始视图</label>
+    </div>
+    <div id="localStorageListContainer" class="data-container"></div>
     <textarea id="localStorageOutput" placeholder="点击'获取Local Storage'按钮..."></textarea>
   </div>
 
   <div id="SessionStorage" class="tabcontent">
     <button id="getSessionStorage">获取Session Storage</button>
-    <button id="copySessionStorage">复制到剪贴板</button>
+    <button id="copySessionStorage">复制全部到剪贴板</button>
+    <div class="view-toggle">
+      <input type="radio" id="sessionListView" name="sessionView" value="list" checked>
+      <label for="sessionListView">列表视图</label>
+      <input type="radio" id="sessionRawView" name="sessionView" value="raw">
+      <label for="sessionRawView">原始视图</label>
+    </div>
+    <div id="sessionStorageListContainer" class="data-container"></div>
     <textarea id="sessionStorageOutput" placeholder="点击'获取Session Storage'按钮..."></textarea>
   </div>
 
