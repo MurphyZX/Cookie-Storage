@@ -147,25 +147,43 @@ document.addEventListener('DOMContentLoaded', function() {
           valueSpan.textContent = ' = ' + truncatedValue;
           valueSpan.title = cookie.value;
           
-          valueContainer.appendChild(valueSpan);
+          // 切换展开/收起的状态标志
+          let isExpanded = false;
           
-          // 如果值被截断，添加展开/收起按钮
+          // 添加可点击切换展开/收起的功能
           if (truncatedValue !== cookie.value) {
-            const expandBtn = document.createElement('button');
-            expandBtn.className = 'expand-btn';
-            expandBtn.textContent = '展开';
-            expandBtn.addEventListener('click', function() {
-              if (expandBtn.textContent === '展开') {
+            valueContainer.classList.add('expandable');
+            // 添加提示图标
+            const expandIndicator = document.createElement('span');
+            expandIndicator.className = 'expand-indicator';
+            expandIndicator.innerHTML = ' 👉';
+            expandIndicator.title = '点击展开/收起';
+            valueSpan.appendChild(expandIndicator);
+            
+            valueContainer.addEventListener('click', function(e) {
+              // 防止点击复制按钮时触发展开/收起
+              if (e.target.classList.contains('copy-btn')) return;
+              
+              isExpanded = !isExpanded;
+              if (isExpanded) {
                 valueSpan.textContent = ' = ' + cookie.value;
-                expandBtn.textContent = '收起';
+                const collapseIndicator = document.createElement('span');
+                collapseIndicator.className = 'expand-indicator';
+                collapseIndicator.innerHTML = ' 👆';
+                collapseIndicator.title = '点击收起';
+                valueSpan.appendChild(collapseIndicator);
               } else {
                 valueSpan.textContent = ' = ' + truncatedValue;
-                expandBtn.textContent = '展开';
+                const expandIndicator = document.createElement('span');
+                expandIndicator.className = 'expand-indicator';
+                expandIndicator.innerHTML = ' 👉';
+                expandIndicator.title = '点击展开';
+                valueSpan.appendChild(expandIndicator);
               }
             });
-            valueContainer.appendChild(expandBtn);
           }
           
+          valueContainer.appendChild(valueSpan);
           content.appendChild(keySpan);
           content.appendChild(valueContainer);
           
@@ -263,7 +281,9 @@ document.addEventListener('DOMContentLoaded', function() {
           
           const keySpan = document.createElement('span');
           keySpan.className = 'data-key';
-          keySpan.textContent = truncateText(key, 30);
+          
+          const truncatedKey = truncateText(key, 30);
+          keySpan.textContent = truncatedKey;
           keySpan.title = key;
           
           const valueContainer = document.createElement('div');
@@ -276,25 +296,74 @@ document.addEventListener('DOMContentLoaded', function() {
           valueSpan.textContent = ' = ' + truncatedValue;
           valueSpan.title = value;
           
-          valueContainer.appendChild(valueSpan);
+          // 切换展开/收起的状态标志
+          let isExpanded = false;
+          let isKeyExpanded = false;
           
-          // 如果值被截断，添加展开/收起按钮
-          if (truncatedValue !== value) {
-            const expandBtn = document.createElement('button');
-            expandBtn.className = 'expand-btn';
-            expandBtn.textContent = '展开';
-            expandBtn.addEventListener('click', function() {
-              if (expandBtn.textContent === '展开') {
-                valueSpan.textContent = ' = ' + value;
-                expandBtn.textContent = '收起';
+          // 为键添加可展开/收起功能
+          if (truncatedKey !== key) {
+            keySpan.classList.add('expandable');
+            // 添加提示图标
+            const expandIndicator = document.createElement('span');
+            expandIndicator.className = 'expand-indicator';
+            expandIndicator.innerHTML = ' 👉';
+            expandIndicator.title = '点击展开/收起';
+            keySpan.appendChild(expandIndicator);
+            
+            keySpan.addEventListener('click', function() {
+              isKeyExpanded = !isKeyExpanded;
+              if (isKeyExpanded) {
+                keySpan.textContent = key;
+                const collapseIndicator = document.createElement('span');
+                collapseIndicator.className = 'expand-indicator';
+                collapseIndicator.innerHTML = ' 👆';
+                collapseIndicator.title = '点击收起';
+                keySpan.appendChild(collapseIndicator);
               } else {
-                valueSpan.textContent = ' = ' + truncatedValue;
-                expandBtn.textContent = '展开';
+                keySpan.textContent = truncatedKey;
+                const expandIndicator = document.createElement('span');
+                expandIndicator.className = 'expand-indicator';
+                expandIndicator.innerHTML = ' 👉';
+                expandIndicator.title = '点击展开';
+                keySpan.appendChild(expandIndicator);
               }
             });
-            valueContainer.appendChild(expandBtn);
           }
           
+          // 为值添加可展开/收起功能
+          if (truncatedValue !== value) {
+            valueContainer.classList.add('expandable');
+            // 添加提示图标
+            const expandIndicator = document.createElement('span');
+            expandIndicator.className = 'expand-indicator';
+            expandIndicator.innerHTML = ' 👉';
+            expandIndicator.title = '点击展开/收起';
+            valueSpan.appendChild(expandIndicator);
+            
+            valueContainer.addEventListener('click', function(e) {
+              // 防止点击复制按钮时触发展开/收起
+              if (e.target.classList.contains('copy-btn')) return;
+              
+              isExpanded = !isExpanded;
+              if (isExpanded) {
+                valueSpan.textContent = ' = ' + value;
+                const collapseIndicator = document.createElement('span');
+                collapseIndicator.className = 'expand-indicator';
+                collapseIndicator.innerHTML = ' 👆';
+                collapseIndicator.title = '点击收起';
+                valueSpan.appendChild(collapseIndicator);
+              } else {
+                valueSpan.textContent = ' = ' + truncatedValue;
+                const expandIndicator = document.createElement('span');
+                expandIndicator.className = 'expand-indicator';
+                expandIndicator.innerHTML = ' 👉';
+                expandIndicator.title = '点击展开';
+                valueSpan.appendChild(expandIndicator);
+              }
+            });
+          }
+          
+          valueContainer.appendChild(valueSpan);
           content.appendChild(keySpan);
           content.appendChild(valueContainer);
           
@@ -418,7 +487,9 @@ document.addEventListener('DOMContentLoaded', function() {
           
           const keySpan = document.createElement('span');
           keySpan.className = 'data-key';
-          keySpan.textContent = truncateText(key, 30);
+          
+          const truncatedKey = truncateText(key, 30);
+          keySpan.textContent = truncatedKey;
           keySpan.title = key;
           
           const valueContainer = document.createElement('div');
@@ -431,25 +502,74 @@ document.addEventListener('DOMContentLoaded', function() {
           valueSpan.textContent = ' = ' + truncatedValue;
           valueSpan.title = value;
           
-          valueContainer.appendChild(valueSpan);
+          // 切换展开/收起的状态标志
+          let isExpanded = false;
+          let isKeyExpanded = false;
           
-          // 如果值被截断，添加展开/收起按钮
-          if (truncatedValue !== value) {
-            const expandBtn = document.createElement('button');
-            expandBtn.className = 'expand-btn';
-            expandBtn.textContent = '展开';
-            expandBtn.addEventListener('click', function() {
-              if (expandBtn.textContent === '展开') {
-                valueSpan.textContent = ' = ' + value;
-                expandBtn.textContent = '收起';
+          // 为键添加可展开/收起功能
+          if (truncatedKey !== key) {
+            keySpan.classList.add('expandable');
+            // 添加提示图标
+            const expandIndicator = document.createElement('span');
+            expandIndicator.className = 'expand-indicator';
+            expandIndicator.innerHTML = ' 👉';
+            expandIndicator.title = '点击展开/收起';
+            keySpan.appendChild(expandIndicator);
+            
+            keySpan.addEventListener('click', function() {
+              isKeyExpanded = !isKeyExpanded;
+              if (isKeyExpanded) {
+                keySpan.textContent = key;
+                const collapseIndicator = document.createElement('span');
+                collapseIndicator.className = 'expand-indicator';
+                collapseIndicator.innerHTML = ' 👆';
+                collapseIndicator.title = '点击收起';
+                keySpan.appendChild(collapseIndicator);
               } else {
-                valueSpan.textContent = ' = ' + truncatedValue;
-                expandBtn.textContent = '展开';
+                keySpan.textContent = truncatedKey;
+                const expandIndicator = document.createElement('span');
+                expandIndicator.className = 'expand-indicator';
+                expandIndicator.innerHTML = ' 👉';
+                expandIndicator.title = '点击展开';
+                keySpan.appendChild(expandIndicator);
               }
             });
-            valueContainer.appendChild(expandBtn);
           }
           
+          // 为值添加可展开/收起功能
+          if (truncatedValue !== value) {
+            valueContainer.classList.add('expandable');
+            // 添加提示图标
+            const expandIndicator = document.createElement('span');
+            expandIndicator.className = 'expand-indicator';
+            expandIndicator.innerHTML = ' 👉';
+            expandIndicator.title = '点击展开/收起';
+            valueSpan.appendChild(expandIndicator);
+            
+            valueContainer.addEventListener('click', function(e) {
+              // 防止点击复制按钮时触发展开/收起
+              if (e.target.classList.contains('copy-btn')) return;
+              
+              isExpanded = !isExpanded;
+              if (isExpanded) {
+                valueSpan.textContent = ' = ' + value;
+                const collapseIndicator = document.createElement('span');
+                collapseIndicator.className = 'expand-indicator';
+                collapseIndicator.innerHTML = ' 👆';
+                collapseIndicator.title = '点击收起';
+                valueSpan.appendChild(collapseIndicator);
+              } else {
+                valueSpan.textContent = ' = ' + truncatedValue;
+                const expandIndicator = document.createElement('span');
+                expandIndicator.className = 'expand-indicator';
+                expandIndicator.innerHTML = ' 👉';
+                expandIndicator.title = '点击展开';
+                valueSpan.appendChild(expandIndicator);
+              }
+            });
+          }
+          
+          valueContainer.appendChild(valueSpan);
           content.appendChild(keySpan);
           content.appendChild(valueContainer);
           
