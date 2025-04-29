@@ -62,7 +62,7 @@ jobs:
 
       - name: 生成变更日志
         run: |
-          git switch main
+          git switch master
           python3 tools/ChangelogGenerator/changelog_generator.py --tag "${{ steps.extract_tag.outputs.tag_name }}" --latest "${{ steps.extract_tag.outputs.latest }}"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
