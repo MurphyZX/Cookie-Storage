@@ -6,6 +6,9 @@ on:
       - 'v*'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   gen:
     runs-on: ubuntu-latest
@@ -56,5 +59,5 @@ jobs:
 
           commit_msg="docs: 自动生成 "${{ steps.extract_tag.outputs.tag_name }}" 的变更日志"
           git commit -m "$commit_msg"
-          
-          git push origin master 
+
+          git push origin master
