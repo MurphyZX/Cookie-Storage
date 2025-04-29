@@ -1,71 +1,154 @@
-name: 打包Chrome扩展
+name: 构建Chrome扩展
 
 on:
   push:
-    branches: [ main, master ]
     tags:
-      - 'v*' # 匹配所有以v开头的标签，如v1.0.0
+      - "v*"  # 匹配所有以v开头的标签，如v1.0.0
+    branches: 
+      - main
+      - master
+    paths:
+      - "popup.html"
+      - "popup.js"
+      - "manifest.json"
+      - "images/**"
+      - ".github/workflows/build.yml"
+      - "!**/*.md"
   pull_request:
-    branches: [ main, master ]
+    branches: 
+      - main
+      - master
+    paths:
+      - "popup.html"
+      - "popup.js"
+      - "manifest.json"
+      - "images/**"
+      - "!**/*.md"
   # 允许手动触发工作流
   workflow_dispatch:
 
+# 避免重复运行相同的工作流
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  meta:
+    # 防止PR触发重复构建
+    if: github.event_name != 'pull_request' || 
+        github.event.pull_request.head.repo.full_name != 
+        github.event.pull_request.base.repo.full_name
+        
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      tag: ${{ steps.version.outputs.tag }}
+      is_release: ${{ steps.version.outputs.is_release }}
+    
+    steps:
+      - name: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # 获取完整历史用于版本生成
+
+      - name: 提取版本信息
+        id: version
+        run: |
+          # 检查是否是标签触发
+          if [[ "${{ github.ref }}" == refs/tags/v* ]]; then
+            VERSION="${{ github.ref_name }}"
+            IS_RELEASE="true"
+          else
+            # 使用短提交哈希作为非发布版本号
+            VERSION="$(git rev-parse --short HEAD)"
+            IS_RELEASE="false"
+          fi
+          
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$VERSION" >> $GITHUB_OUTPUT
+          echo "is_release=$IS_RELEASE" >> $GITHUB_OUTPUT
+          echo "版本信息: $VERSION (Release: $IS_RELEASE)"
+
+      - name: 生成变更日志
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          # 获取上一个标签
+          LAST_TAG=$(git describe --tags --match "v*" --abbrev=0 --exclude="${{ github.ref_name }}" 2>/dev/null || echo "")
+          
+          echo "## Cookie和Storage提取器 ${{ github.ref_name }}" > CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          
+          if [ -n "$LAST_TAG" ]; then
+            # 生成版本间的变更记录
+            echo "### 更新内容" >> CHANGELOG.md
+            git log --pretty=format:"- %s" ${LAST_TAG}..${{ github.ref_name }} >> CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            echo "" >> CHANGELOG.md
+            echo "**完整变更记录**: [$LAST_TAG → ${{ github.ref_name }}](https://github.com/${{ github.repository }}/compare/${LAST_TAG}...${{ github.ref_name }})" >> CHANGELOG.md
+          else
+            echo "### 首次发布" >> CHANGELOG.md
+            echo "- 初始版本" >> CHANGELOG.md
+          fi
+
+      - name: 上传变更日志
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/upload-artifact@v4
+        with:
+          name: changelog
+          path: CHANGELOG.md
+
   build:
+    needs: meta
     runs-on: ubuntu-latest
     permissions:
-      contents: write # 明确给予写入内容的权限，用于创建Release
-
+      contents: write  # 明确给予发布Release的权限
+      
     steps:
-    - uses: actions/checkout@v4
+      - name: 检出代码
+        uses: actions/checkout@v4
+        
+      - name: 更新版本号
+        run: |
+          # 更新manifest.json中的版本号(仅标签触发)
+          if [[ "${{ needs.meta.outputs.is_release }}" == "true" ]]; then
+            VERSION="${{ needs.meta.outputs.version }}"
+            VERSION="${VERSION#v}"  # 移除v前缀
+            
+            # 使用jq更新版本号
+            jq '.version = "'$VERSION'"' manifest.json > manifest.json.tmp
+            mv manifest.json.tmp manifest.json
+            
+            echo "已更新manifest.json中的版本号为: $VERSION"
+          fi
+        
+      - name: 打包扩展
+        run: |
+          mkdir -p dist
+          cp -r popup.html popup.js manifest.json images dist/
+          
+      - name: 创建ZIP包
+        run: |
+          cd dist
+          zip -r ../cookie_storage_extractor.zip .
+          cd ..
       
-    - name: 设置Node.js环境
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        
-    - name: 安装依赖
-      run: |
-        npm install -g @jsdevtools/file-path-filter
-        npm install -g chrome-webstore-upload-cli
-        
-    - name: 打包扩展
-      run: |
-        mkdir -p dist
-        cp -r popup.html popup.js manifest.json images dist/
-        
-    - name: 创建ZIP包
-      run: |
-        cd dist
-        zip -r ../cookie_storage_extractor.zip .
-        cd ..
-      
-    - name: 上传构建产物
-      uses: actions/upload-artifact@v4
-      with:
-        name: chrome-extension
-        path: cookie_storage_extractor.zip
-        
-    # 可选: 发布到Chrome Web Store
-    # 需要先在GitHub Secrets中设置相关密钥
-    # - name: 发布到Chrome Web Store
-    #   if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    #   env:
-    #     EXTENSION_ID: ${{ secrets.EXTENSION_ID }}
-    #     CLIENT_ID: ${{ secrets.CLIENT_ID }}
-    #     CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-    #     REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-    #   run: |
-    #     webstore upload --source cookie_storage_extractor.zip --extension-id $EXTENSION_ID --client-id $CLIENT_ID --client-secret $CLIENT_SECRET --refresh-token $REFRESH_TOKEN
-    #     webstore publish --extension-id $EXTENSION_ID --client-id $CLIENT_ID --client-secret $CLIENT_SECRET --refresh-token $REFRESH_TOKEN
-    
-    # 自动创建GitHub Release
-    - name: 创建Release
-      if: startsWith(github.ref, 'refs/tags/')
-      uses: softprops/action-gh-release@v2
-      with:
-        files: cookie_storage_extractor.zip
-        generate_release_notes: true
-        draft: false
-        prerelease: false
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - name: 下载变更日志
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: actions/download-artifact@v4
+        with:
+          name: changelog
+          
+      - name: 上传构建产物
+        uses: actions/upload-artifact@v4
+        with:
+          name: chrome-extension
+          path: cookie_storage_extractor.zip
+          
+      - name: 创建Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: cookie_storage_extractor.zip
+          body_path: CHANGELOG.md
+          draft: false
+          token: ${{ secrets.GITHUB_TOKEN }}
