@@ -8,7 +8,7 @@ import re
 import urllib.request
 import urllib.error
 
-repo = "about/Cookie和Storage提取器" # Owner/RepoName
+repo = "MurphyZX/Cookie-Storage" # Owner/RepoName
 cur_dir = Path(__file__).parent
 contributors_path = cur_dir / "contributors.json"
 changelog_path = cur_dir.parent.parent / "CHANGELOG.md"
