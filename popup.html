@@ -70,17 +70,19 @@
     .data-content {
       flex-grow: 1;
       overflow: hidden;
-      text-overflow: ellipsis;
       margin-right: 10px;
-      word-break: break-all;
+      display: flex;
+      flex-direction: column;
     }
     .data-key {
       font-weight: bold;
       color: #333;
+      word-break: break-all;
     }
     .data-value {
       color: #666;
       margin-left: 5px;
+      word-break: break-all;
     }
     .copy-btn {
       background-color: #f1f1f1;
@@ -106,6 +108,26 @@
     }
     .view-toggle {
       margin: 10px 0;
+    }
+    .value-container {
+      display: flex;
+      align-items: center;
+      word-break: break-all;
+      margin-top: 3px;
+    }
+    .expand-btn {
+      background-color: #f8f8f8;
+      color: #555;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-size: 11px;
+      margin-left: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .expand-btn:hover {
+      background-color: #eee;
     }
   </style>
 </head>

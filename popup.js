@@ -89,6 +89,12 @@ document.addEventListener('DOMContentLoaded', function() {
   toggleLocalStorageView('list');
   toggleSessionStorageView('list');
   
+  // 截断长文本
+  function truncateText(text, maxLength = 100) {
+    if (text.length <= maxLength) return text;
+    return text.substring(0, maxLength) + '...';
+  }
+  
   // 获取Cookie按钮
   document.getElementById('getCookies').addEventListener('click', function() {
     // 获取当前选项卡信息
@@ -131,12 +137,37 @@ document.addEventListener('DOMContentLoaded', function() {
           keySpan.className = 'data-key';
           keySpan.textContent = cookie.name;
           
+          const valueContainer = document.createElement('div');
+          valueContainer.className = 'value-container';
+          
           const valueSpan = document.createElement('span');
           valueSpan.className = 'data-value';
-          valueSpan.textContent = ' = ' + cookie.value;
+          
+          const truncatedValue = truncateText(cookie.value, 50);
+          valueSpan.textContent = ' = ' + truncatedValue;
+          valueSpan.title = cookie.value;
+          
+          valueContainer.appendChild(valueSpan);
+          
+          // 如果值被截断，添加展开/收起按钮
+          if (truncatedValue !== cookie.value) {
+            const expandBtn = document.createElement('button');
+            expandBtn.className = 'expand-btn';
+            expandBtn.textContent = '展开';
+            expandBtn.addEventListener('click', function() {
+              if (expandBtn.textContent === '展开') {
+                valueSpan.textContent = ' = ' + cookie.value;
+                expandBtn.textContent = '收起';
+              } else {
+                valueSpan.textContent = ' = ' + truncatedValue;
+                expandBtn.textContent = '展开';
+              }
+            });
+            valueContainer.appendChild(expandBtn);
+          }
           
           content.appendChild(keySpan);
-          content.appendChild(valueSpan);
+          content.appendChild(valueContainer);
           
           const copyButton = document.createElement('button');
           copyButton.className = 'copy-btn';
@@ -232,14 +263,40 @@ document.addEventListener('DOMContentLoaded', function() {
           
           const keySpan = document.createElement('span');
           keySpan.className = 'data-key';
-          keySpan.textContent = key;
+          keySpan.textContent = truncateText(key, 30);
+          keySpan.title = key;
+          
+          const valueContainer = document.createElement('div');
+          valueContainer.className = 'value-container';
           
           const valueSpan = document.createElement('span');
           valueSpan.className = 'data-value';
-          valueSpan.textContent = ' = ' + value;
+          
+          const truncatedValue = truncateText(value, 50);
+          valueSpan.textContent = ' = ' + truncatedValue;
+          valueSpan.title = value;
+          
+          valueContainer.appendChild(valueSpan);
+          
+          // 如果值被截断，添加展开/收起按钮
+          if (truncatedValue !== value) {
+            const expandBtn = document.createElement('button');
+            expandBtn.className = 'expand-btn';
+            expandBtn.textContent = '展开';
+            expandBtn.addEventListener('click', function() {
+              if (expandBtn.textContent === '展开') {
+                valueSpan.textContent = ' = ' + value;
+                expandBtn.textContent = '收起';
+              } else {
+                valueSpan.textContent = ' = ' + truncatedValue;
+                expandBtn.textContent = '展开';
+              }
+            });
+            valueContainer.appendChild(expandBtn);
+          }
           
           content.appendChild(keySpan);
-          content.appendChild(valueSpan);
+          content.appendChild(valueContainer);
           
           const copyKeyButton = document.createElement('button');
           copyKeyButton.className = 'copy-btn';
@@ -361,14 +418,40 @@ document.addEventListener('DOMContentLoaded', function() {
           
           const keySpan = document.createElement('span');
           keySpan.className = 'data-key';
-          keySpan.textContent = key;
+          keySpan.textContent = truncateText(key, 30);
+          keySpan.title = key;
+          
+          const valueContainer = document.createElement('div');
+          valueContainer.className = 'value-container';
           
           const valueSpan = document.createElement('span');
           valueSpan.className = 'data-value';
-          valueSpan.textContent = ' = ' + value;
+          
+          const truncatedValue = truncateText(value, 50);
+          valueSpan.textContent = ' = ' + truncatedValue;
+          valueSpan.title = value;
+          
+          valueContainer.appendChild(valueSpan);
+          
+          // 如果值被截断，添加展开/收起按钮
+          if (truncatedValue !== value) {
+            const expandBtn = document.createElement('button');
+            expandBtn.className = 'expand-btn';
+            expandBtn.textContent = '展开';
+            expandBtn.addEventListener('click', function() {
+              if (expandBtn.textContent === '展开') {
+                valueSpan.textContent = ' = ' + value;
+                expandBtn.textContent = '收起';
+              } else {
+                valueSpan.textContent = ' = ' + truncatedValue;
+                expandBtn.textContent = '展开';
+              }
+            });
+            valueContainer.appendChild(expandBtn);
+          }
           
           content.appendChild(keySpan);
-          content.appendChild(valueSpan);
+          content.appendChild(valueContainer);
           
           const copyKeyButton = document.createElement('button');
           copyKeyButton.className = 'copy-btn';
